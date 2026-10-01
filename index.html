@@ -2,635 +2,459 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Monefy Web</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Gastos</title>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
-    body { background-color: #121824; color: #f0f4f8; padding-bottom: 75px; max-width: 480px; margin: 0 auto; min-height: 100vh; }
-    
-    /* Top Header */
-    header { background: #1a2232; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #2d3748; position: sticky; top: 0; z-index: 10; }
-    .logo-title { font-size: 1.1rem; font-weight: bold; color: #4fd1c5; }
-    select.account-select { background: #2d3748; color: #fff; border: none; padding: 6px 12px; border-radius: 20px; font-size: 0.85rem; outline: none; }
+    :root {
+      --glass-bg: rgba(255, 255, 255, 0.08);
+      --glass-border: rgba(255, 255, 255, 0.18);
+      --glass-shadow: 0 16px 40px 0 rgba(0, 0, 0, 0.37);
+      --accent-green: #30D158;
+      --accent-red: #FF453A;
+      --accent-blue: #0A84FF;
+      --text-main: #FFFFFF;
+      --text-muted: rgba(255, 255, 255, 0.6);
+    }
 
-    /* Period Filter */
-    .period-bar { display: flex; justify-content: space-between; align-items: center; background: #1a2232; padding: 8px 12px; border-bottom: 1px solid #2d3748; }
-    .period-btn { background: none; border: none; color: #a0aec0; font-weight: 500; padding: 6px 10px; font-size: 0.8rem; border-radius: 12px; cursor: pointer; }
-    .period-btn.active { background: #319795; color: #fff; }
-    .nav-arrow { background: none; border: none; color: #4fd1c5; font-size: 1.2rem; padding: 0 8px; cursor: pointer; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
 
-    /* Summary Header */
-    .summary-card { display: flex; justify-content: space-around; background: #171e2e; padding: 12px 8px; margin: 12px; border-radius: 14px; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
-    .sum-box small { display: block; font-size: 0.75rem; color: #a0aec0; margin-bottom: 2px; }
-    .sum-box span { font-size: 1rem; font-weight: bold; }
-    .text-income { color: #48bb78; }
-    .text-expense { color: #f56565; }
-    .text-balance { color: #63b3ed; }
+    body {
+      background-color: #000000;
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      padding: calc(env(safe-area-inset-top) + 20px) 16px calc(env(safe-area-inset-bottom) + 20px);
+      overflow-x: hidden;
+      position: relative;
+    }
 
-    /* Chart Container */
-    .chart-container { position: relative; width: 180px; height: 180px; margin: 12px auto; }
-    canvas { width: 100%; height: 100%; }
-    .chart-center-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; pointer-events: none; }
-    .chart-center-text small { font-size: 0.7rem; color: #a0aec0; }
-    .chart-center-text div { font-size: 0.95rem; font-weight: bold; color: #e2e8f0; }
+    /* Ambient Liquid Lights Background */
+    .liquid-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: -1;
+      overflow: hidden;
+      background: #0d0e15;
+    }
 
-    /* Category Grid */
-    .category-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding: 0 12px; margin-top: 10px; }
-    .cat-card { background: #1a2232; border-radius: 12px; padding: 10px 4px; text-align: center; cursor: pointer; border: 1px solid #2d3748; transition: transform 0.1s; }
-    .cat-card:active { transform: scale(0.95); }
-    .cat-icon { font-size: 1.5rem; display: block; margin-bottom: 4px; }
-    .cat-name { font-size: 0.72rem; color: #cbd5e0; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .cat-amount { font-size: 0.72rem; font-weight: bold; color: #e2e8f0; margin-top: 2px; }
+    .blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(90px);
+      opacity: 0.6;
+      animation: float 12s infinite alternate ease-in-out;
+    }
 
-    /* Bottom Action Bar */
-    .bottom-bar { position: fixed; bottom: 0; left: 0; right: 0; max-width: 480px; margin: 0 auto; background: #1a2232; display: flex; justify-content: space-around; padding: 10px 12px; border-top: 1px solid #2d3748; z-index: 20; }
-    .btn-action { flex: 1; padding: 12px; border: none; border-radius: 12px; font-weight: bold; font-size: 0.95rem; color: white; display: flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer; margin: 0 4px; }
-    .btn-expense { background: #e53e3e; }
-    .btn-income { background: #38a169; }
-    .btn-nav-icon { background: #2d3748; color: #e2e8f0; flex: 0.5; font-size: 1.1rem; }
+    .blob-1 {
+      width: 280px;
+      height: 280px;
+      background: #0A84FF;
+      top: -40px;
+      left: -40px;
+    }
 
-    /* Modals */
-    .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 100; align-items: flex-end; justify-content: center; }
-    .modal.active { display: flex; }
-    .modal-content { background: #1a2232; width: 100%; max-width: 480px; border-radius: 20px 20px 0 0; padding: 16px; max-height: 90vh; overflow-y: auto; box-shadow: 0 -4px 20px rgba(0,0,0,0.5); }
-    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-    .modal-title { font-size: 1.1rem; font-weight: bold; }
-    .close-btn { background: none; border: none; color: #a0aec0; font-size: 1.5rem; cursor: pointer; }
+    .blob-2 {
+      width: 320px;
+      height: 320px;
+      background: #BF5AF2;
+      bottom: -60px;
+      right: -40px;
+      animation-delay: -4s;
+    }
 
-    /* Keypad Calculator */
-    .calc-display { background: #121824; font-size: 1.8rem; font-weight: bold; text-align: right; padding: 12px; border-radius: 10px; margin-bottom: 12px; color: #4fd1c5; word-break: break-all; min-height: 55px; }
-    .calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 12px; }
-    .calc-btn { background: #2d3748; border: none; color: white; font-size: 1.2rem; padding: 14px; border-radius: 10px; font-weight: bold; cursor: pointer; }
-    .calc-btn:active { background: #4a5568; }
-    .calc-btn.op { background: #319795; }
-    .calc-btn.eq { background: #38a169; grid-column: span 2; }
+    .blob-3 {
+      width: 200px;
+      height: 200px;
+      background: #30D158;
+      top: 40%;
+      left: 30%;
+      animation-delay: -8s;
+      opacity: 0.3;
+    }
 
-    /* Form Fields */
-    .field-group { margin-bottom: 10px; }
-    .field-group label { display: block; font-size: 0.75rem; color: #a0aec0; margin-bottom: 4px; }
-    .field-group input, .field-group select { width: 100%; background: #121824; border: 1px solid #2d3748; color: white; padding: 10px; border-radius: 8px; font-size: 0.9rem; }
+    @keyframes float {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(30px, 50px) scale(1.1); }
+    }
 
-    /* Category Selection Inside Modal */
-    .modal-cat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; max-height: 140px; overflow-y: auto; margin-bottom: 12px; }
-    .modal-cat-item { background: #121824; padding: 8px; border-radius: 8px; text-align: center; font-size: 0.75rem; cursor: pointer; border: 1px solid transparent; }
-    .modal-cat-item.selected { border-color: #319795; background: #202b3d; }
+    .app-container {
+      width: 100%;
+      max-width: 420px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
 
-    /* History List */
-    .history-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #2d3748; }
-    .history-item:last-child { border-bottom: none; }
-    .history-left { display: flex; align-items: center; gap: 10px; }
-    .history-icon { font-size: 1.4rem; background: #2d3748; padding: 8px; border-radius: 10px; }
-    .history-meta small { color: #a0aec0; font-size: 0.75rem; display: block; }
+    /* Common Glass Card Style */
+    .glass-card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(30px) saturate(190%);
+      -webkit-backdrop-filter: blur(30px) saturate(190%);
+      border: 1px solid var(--glass-border);
+      border-radius: 28px;
+      padding: 22px;
+      box-shadow: var(--glass-shadow);
+    }
 
-    /* Action Buttons in Settings */
-    .settings-btn { width: 100%; background: #2d3748; color: white; border: none; padding: 12px; border-radius: 10px; margin-bottom: 8px; font-weight: bold; text-align: left; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 4px 8px;
+    }
+
+    header h1 {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    .subtitle {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    /* Balance Section */
+    .balance-card {
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .balance-title {
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .balance-amount {
+      font-size: 42px;
+      font-weight: 800;
+      letter-spacing: -1px;
+      margin-bottom: 20px;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding-top: 16px;
+    }
+
+    .stat-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .stat-value {
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .income { color: var(--accent-green); }
+    .expense { color: var(--accent-red); }
+
+    /* Form Styles */
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .input-glass {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 16px;
+      padding: 14px 16px;
+      color: #fff;
+      font-size: 15px;
+      outline: none;
+      transition: all 0.3s ease;
+    }
+
+    .input-glass:focus {
+      border-color: var(--accent-blue);
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .type-selector {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .type-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      padding: 12px;
+      border-radius: 16px;
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .type-btn.active-expense {
+      background: rgba(255, 69, 58, 0.2);
+      border-color: var(--accent-red);
+      color: #FFF;
+    }
+
+    .type-btn.active-income {
+      background: rgba(48, 209, 88, 0.2);
+      border-color: var(--accent-green);
+      color: #FFF;
+    }
+
+    .btn-submit {
+      background: var(--text-main);
+      color: #000;
+      border: none;
+      padding: 16px;
+      border-radius: 18px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.1s ease, opacity 0.2s ease;
+      margin-top: 4px;
+    }
+
+    .btn-submit:active {
+      transform: scale(0.97);
+      opacity: 0.9;
+    }
+
+    /* Transactions List */
+    .history-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      padding: 0 4px;
+    }
+
+    .transaction-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .transaction-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 18px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 20px;
+      backdrop-filter: blur(10px);
+    }
+
+    .tx-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .tx-title {
+      font-size: 15px;
+      font-weight: 500;
+    }
+
+    .tx-date {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .tx-amount {
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .empty-state {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 14px;
+      padding: 20px;
+    }
   </style>
 </head>
 <body>
 
-  <!-- Header -->
-  <header>
-    <div class="logo-title">Monefy Web</div>
-    <select id="accountSelect" class="account-select" onchange="changeAccount(this.value)">
-      <option value="ALL">Todas las cuentas</option>
-      <option value="Efectivo">💵 Efectivo</option>
-      <option value="Tarjeta">💳 Tarjeta</option>
-      <option value="Ahorros">🏦 Ahorros</option>
-    </select>
-  </header>
-
-  <!-- Period Navigation Bar -->
-  <div class="period-bar">
-    <button class="nav-arrow" onclick="changePeriodOffset(-1)">‹</button>
-    <div id="periodLabel" style="font-weight: bold; font-size: 0.85rem; color: #e2e8f0;">Mes Actual</div>
-    <button class="nav-arrow" onclick="changePeriodOffset(1)">›</button>
-  </div>
-  <div class="period-bar" style="justify-content: center; gap: 6px; background: #121824;">
-    <button class="period-btn" onclick="setPeriod('DAY')">Día</button>
-    <button class="period-btn" onclick="setPeriod('WEEK')">Semana</button>
-    <button class="period-btn active" onclick="setPeriod('MONTH')">Mes</button>
-    <button class="period-btn" onclick="setPeriod('YEAR')">Año</button>
-    <button class="period-btn" onclick="setPeriod('ALL')">Todo</button>
+  <div class="liquid-bg">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
   </div>
 
-  <!-- Summary Cards -->
-  <div class="summary-card">
-    <div class="sum-box"><small>Ingresos</small><span id="sumIncome" class="text-income">$0.00</span></div>
-    <div class="sum-box"><small>Gastos</small><span id="sumExpense" class="text-expense">$0.00</span></div>
-    <div class="sum-box"><small>Balance</small><span id="sumBalance" class="text-balance">$0.00</span></div>
-  </div>
+  <div class="app-container">
+    <header>
+      <div>
+        <h1>Finanzas</h1>
+        <div class="subtitle">Seguimiento personal</div>
+      </div>
+    </header>
 
-  <!-- Central Chart -->
-  <div class="chart-container">
-    <canvas id="pieChart" width="200" height="200"></canvas>
-    <div class="chart-center-text">
-      <small>Gastos</small>
-      <div id="chartTotal">$0.00</div>
+    <!-- Balance Card -->
+    <div class="glass-card balance-card">
+      <div class="balance-title">Balance Total</div>
+      <div class="balance-amount" id="balance">$0.00</div>
+      
+      <div class="stats-grid">
+        <div class="stat-item">
+          <span class="stat-label">Ingresos</span>
+          <span class="stat-value income" id="income">+$0.00</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Gastos</span>
+          <span class="stat-value expense" id="expenses">-$0.00</span>
+        </div>
+      </div>
     </div>
-  </div>
 
-  <!-- Category Grid -->
-  <div id="categoryGrid" class="category-grid"></div>
+    <!-- Add Transaction Form -->
+    <div class="glass-card">
+      <form id="form" class="form-group">
+        <div class="type-selector">
+          <button type="button" class="type-btn active-expense" id="btn-expense" onclick="setType('expense')">Gasto</button>
+          <button type="button" class="type-btn" id="btn-income" onclick="setType('income')">Ingreso</button>
+        </div>
 
-  <!-- Bottom Navigation Action Bar -->
-  <div class="bottom-bar">
-    <button class="btn-action btn-nav-icon" onclick="openModal('historyModal')" title="Historial">📜</button>
-    <button class="btn-action btn-expense" onclick="openTransactionModal('expense')">➖ Gasto</button>
-    <button class="btn-action btn-income" onclick="openTransactionModal('income')">➕ Ingreso</button>
-    <button class="btn-action btn-nav-icon" onclick="openModal('settingsModal')" title="Ajustes y Drive">⚙️</button>
-  </div>
+        <input type="text" id="text" class="input-glass" placeholder="Descripción (ej. Supermercado)" required>
+        <input type="number" id="amount" class="input-glass" placeholder="Monto ($)" step="0.01" required>
 
-  <!-- MODAL: ADD TRANSACTION / CALCULATOR -->
-  <div id="transactionModal" class="modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <div class="modal-title" id="transModalTitle">Nuevo Registro</div>
-        <button class="close-btn" onclick="closeModal('transactionModal')">&times;</button>
-      </div>
-
-      <div class="calc-display" id="calcDisplay">0</div>
-
-      <div class="calc-grid">
-        <button class="calc-btn" onclick="calcPress('7')">7</button>
-        <button class="calc-btn" onclick="calcPress('8')">8</button>
-        <button class="calc-btn" onclick="calcPress('9')">9</button>
-        <button class="calc-btn op" onclick="calcPress('/')">÷</button>
-
-        <button class="calc-btn" onclick="calcPress('4')">4</button>
-        <button class="calc-btn" onclick="calcPress('5')">5</button>
-        <button class="calc-btn" onclick="calcPress('6')">6</button>
-        <button class="calc-btn op" onclick="calcPress('*')">×</button>
-
-        <button class="calc-btn" onclick="calcPress('1')">1</button>
-        <button class="calc-btn" onclick="calcPress('2')">2</button>
-        <button class="calc-btn" onclick="calcPress('3')">3</button>
-        <button class="calc-btn op" onclick="calcPress('-')">-</button>
-
-        <button class="calc-btn" onclick="calcPress('0')">0</button>
-        <button class="calc-btn" onclick="calcPress('.')">.</button>
-        <button class="calc-btn op" onclick="calcPress('C')">C</button>
-        <button class="calc-btn op" onclick="calcPress('+')">+</button>
-
-        <button class="calc-btn eq" onclick="calcEvaluate()">=</button>
-        <button class="calc-btn op" onclick="calcPress('DEL')">⌫</button>
-      </div>
-
-      <div class="field-group">
-        <label>Categoría</label>
-        <div id="modalCatGrid" class="modal-cat-grid"></div>
-      </div>
-
-      <div class="field-group">
-        <label>Cuenta</label>
-        <select id="modalAccount">
-          <option value="Efectivo">💵 Efectivo</option>
-          <option value="Tarjeta">💳 Tarjeta</option>
-          <option value="Ahorros">🏦 Ahorros</option>
-        </select>
-      </div>
-
-      <div class="field-group">
-        <label>Nota / Descripción</label>
-        <input type="text" id="modalNote" placeholder="Ej. Almuerzo de negocios, Gasolina">
-      </div>
-
-      <div class="field-group">
-        <label>Fecha</label>
-        <input type="date" id="modalDate">
-      </div>
-
-      <button id="btnSaveTrans" class="btn-action btn-income" style="width:100%; margin:12px 0 0 0;" onclick="saveTransaction()">Guardar Registro</button>
+        <button type="submit" class="btn-submit">Registrar</button>
+      </form>
     </div>
-  </div>
 
-  <!-- MODAL: HISTORY -->
-  <div id="historyModal" class="modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <div class="modal-title">Historial de Transacciones</div>
-        <button class="close-btn" onclick="closeModal('historyModal')">&times;</button>
+    <!-- History -->
+    <div>
+      <div class="history-title">Movimientos</div>
+      <div class="transaction-list" id="list">
+        <div class="empty-state">No hay movimientos registrados</div>
       </div>
-      <div id="historyList" style="max-height: 60vh; overflow-y: auto;"></div>
-    </div>
-  </div>
-
-  <!-- MODAL: SETTINGS & DRIVE BACKUP -->
-  <div id="settingsModal" class="modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <div class="modal-title">Ajustes & Respaldo en Drive</div>
-        <button class="close-btn" onclick="closeModal('settingsModal')">&times;</button>
-      </div>
-
-      <div class="field-group" style="margin-bottom: 16px;">
-        <label>Símbolo de Moneda</label>
-        <select id="currencySelect" onchange="changeCurrency(this.value)">
-          <option value="$">$ (USD / Pesos)</option>
-          <option value="RD$">RD$ (Peso Dominicano)</option>
-          <option value="€">€ (Euro)</option>
-          <option value="MXN$">MXN$ (Peso Mexicano)</option>
-          <option value="COP$">COP$ (Peso Colombiano)</option>
-        </select>
-      </div>
-
-      <button class="settings-btn" onclick="exportBackupJSON()">
-        <span>💾 Respaldar en Google Drive / Dispositivo</span>
-        <span>➔</span>
-      </button>
-
-      <button class="settings-btn" onclick="document.getElementById('importFileInput').click()">
-        <span>📂 Restaurar Copia desde Drive / Archivo</span>
-        <span>➔</span>
-      </button>
-      <input type="file" id="importFileInput" style="display:none;" accept=".json" onchange="importBackupJSON(event)">
-
-      <button class="settings-btn" onclick="exportCSV()">
-        <span>📊 Exportar a Excel (CSV)</span>
-        <span>➔</span>
-      </button>
-
-      <button class="settings-btn" style="background: #9b2c2c; margin-top: 20px;" onclick="resetAllData()">
-        <span>⚠️ Borrar Todos los Datos</span>
-        <span>🗑️</span>
-      </button>
     </div>
   </div>
 
   <script>
-    // --- APP DATA & STATE ---
-    const CATEGORIES = {
-      expense: [
-        { id: 'comida', name: 'Comida', icon: '🍔', color: '#e53e3e' },
-        { id: 'transporte', name: 'Transporte', icon: '🚗', color: '#dd6b20' },
-        { id: 'servicios', name: 'Servicios', icon: '🏠', color: '#d69e2e' },
-        { id: 'ocio', name: 'Ocio', icon: '🎬', color: '#319795' },
-        { id: 'compras', name: 'Compras', icon: '🛍️', color: '#3182ce' },
-        { id: 'salud', name: 'Salud', icon: '🏥', color: '#805ad5' },
-        { id: 'vehiculo', name: 'Vehículo', icon: '⛽', color: '#d53f8c' },
-        { id: 'otros', name: 'Otros', icon: '📦', color: '#718096' }
-      ],
-      income: [
-        { id: 'salario', name: 'Salario', icon: '💵', color: '#38a169' },
-        { id: 'depositos', name: 'Depósitos', icon: '🏦', color: '#2b6cb0' },
-        { id: 'otros_inc', name: 'Otros Ingresos', icon: '💰', color: '#319795' }
-      ]
-    };
+    let currentType = 'expense';
+    let transactions = JSON.parse(localStorage.getItem('apple_glass_transactions')) || [];
 
-    let state = {
-      transactions: JSON.parse(localStorage.getItem('monefy_trans')) || [],
-      currency: localStorage.getItem('monefy_currency') || '$',
-      account: 'ALL',
-      period: 'MONTH',
-      periodOffset: 0
-    };
+    function setType(type) {
+      currentType = type;
+      const btnExpense = document.getElementById('btn-expense');
+      const btnIncome = document.getElementById('btn-income');
 
-    let activeType = 'expense';
-    let selectedCatId = 'comida';
-    let calcExpr = '0';
-
-    document.addEventListener('DOMContentLoaded', () => {
-      document.getElementById('currencySelect').value = state.currency;
-      document.getElementById('modalDate').valueAsDate = new Date();
-      renderApp();
-    });
-
-    function saveState() {
-      localStorage.setItem('monefy_trans', JSON.stringify(state.transactions));
-      localStorage.setItem('monefy_currency', state.currency);
-      renderApp();
-    }
-
-    function calcPress(val) {
-      if (val === 'C') {
-        calcExpr = '0';
-      } else if (val === 'DEL') {
-        calcExpr = calcExpr.length > 1 ? calcExpr.slice(0, -1) : '0';
+      if (type === 'expense') {
+        btnExpense.className = 'type-btn active-expense';
+        btnIncome.className = 'type-btn';
       } else {
-        if (calcExpr === '0' && val !== '.') calcExpr = val;
-        else calcExpr += val;
-      }
-      document.getElementById('calcDisplay').innerText = calcExpr;
-    }
-
-    function calcEvaluate() {
-      try {
-        let sanitized = calcExpr.replace(/[^0-9+\-*/.]/g, '');
-        let res = eval(sanitized);
-        if (isNaN(res) || !isFinite(res)) res = 0;
-        calcExpr = res.toFixed(2).replace(/\.00$/, '');
-        document.getElementById('calcDisplay').innerText = calcExpr;
-      } catch (e) {
-        document.getElementById('calcDisplay').innerText = 'Error';
-        calcExpr = '0';
+        btnIncome.className = 'type-btn active-income';
+        btnExpense.className = 'type-btn';
       }
     }
 
-    function openTransactionModal(type, preSelectedCat = null) {
-      activeType = type;
-      calcExpr = '0';
-      document.getElementById('calcDisplay').innerText = '0';
-      document.getElementById('modalNote').value = '';
-      document.getElementById('modalDate').valueAsDate = new Date();
+    function updateValues() {
+      const amounts = transactions.map(t => t.type === 'income' ? t.amount : -t.amount);
+      const total = amounts.reduce((acc, item) => (acc += item), 0).toFixed(2);
       
-      const title = type === 'expense' ? '➖ Registrar Gasto' : '➕ Registrar Ingreso';
-      document.getElementById('transModalTitle').innerText = title;
+      const income = transactions
+        .filter(t => t.type === 'income')
+        .reduce((acc, t) => (acc += t.amount), 0)
+        .toFixed(2);
 
-      const catList = CATEGORIES[type];
-      selectedCatId = preSelectedCat || catList[0].id;
-      renderModalCategories();
+      const expenses = transactions
+        .filter(t => t.type === 'expense')
+        .reduce((acc, t) => (acc += t.amount), 0)
+        .toFixed(2);
 
-      const btnSave = document.getElementById('btnSaveTrans');
-      btnSave.className = `btn-action ${type === 'expense' ? 'btn-expense' : 'btn-income'}`;
-
-      openModal('transactionModal');
+      document.getElementById('balance').innerText = `$${total}`;
+      document.getElementById('income').innerText = `+$${income}`;
+      document.getElementById('expenses').innerText = `-$${expenses}`;
     }
 
-    function renderModalCategories() {
-      const grid = document.getElementById('modalCatGrid');
-      grid.innerHTML = '';
-      CATEGORIES[activeType].forEach(cat => {
-        const item = document.createElement('div');
-        item.className = `modal-cat-item ${cat.id === selectedCatId ? 'selected' : ''}`;
-        item.innerHTML = `<span style="font-size:1.2rem;">${cat.icon}</span><br>${cat.name}`;
-        item.onclick = () => {
-          selectedCatId = cat.id;
-          renderModalCategories();
-        };
-        grid.appendChild(item);
-      });
-    }
-
-    function saveTransaction() {
-      calcEvaluate();
-      const amount = parseFloat(calcExpr);
-      if (!amount || amount <= 0) {
-        alert('Ingresa un monto válido');
-        return;
-      }
-
-      const note = document.getElementById('modalNote').value.trim();
-      const account = document.getElementById('modalAccount').value;
-      const dateVal = document.getElementById('modalDate').value;
-
-      const newTrans = {
-        id: Date.now(),
-        type: activeType,
-        amount: amount,
-        catId: selectedCatId,
-        account: account,
-        note: note,
-        date: dateVal || new Date().toISOString().split('T')[0]
-      };
-
-      state.transactions.unshift(newTrans);
-      saveState();
-      closeModal('transactionModal');
-    }
-
-    function getFilteredTransactions() {
-      return state.transactions.filter(t => {
-        if (state.account !== 'ALL' && t.account !== state.account) return false;
-        
-        const tDate = new Date(t.date + 'T00:00:00');
-        const now = new Date();
-        now.setHours(0,0,0,0);
-
-        if (state.period === 'DAY') {
-          const target = new Date(now);
-          target.setDate(now.getDate() + state.periodOffset);
-          return tDate.toDateString() === target.toDateString();
-        } 
-        else if (state.period === 'MONTH') {
-          const target = new Date(now.getFullYear(), now.getMonth() + state.periodOffset, 1);
-          return tDate.getFullYear() === target.getFullYear() && tDate.getMonth() === target.getMonth();
-        }
-        else if (state.period === 'YEAR') {
-          const targetYear = now.getFullYear() + state.periodOffset;
-          return tDate.getFullYear() === targetYear;
-        }
-        return true;
-      });
-    }
-
-    function renderApp() {
-      const filtered = getFilteredTransactions();
-
-      let inc = 0, exp = 0;
-      const catTotals = {};
-
-      filtered.forEach(t => {
-        if (t.type === 'income') inc += t.amount;
-        else {
-          exp += t.amount;
-          catTotals[t.catId] = (catTotals[t.catId] || 0) + t.amount;
-        }
-      });
-
-      document.getElementById('sumIncome').innerText = `${state.currency}${inc.toFixed(2)}`;
-      document.getElementById('sumExpense').innerText = `${state.currency}${exp.toFixed(2)}`;
-      const balance = inc - exp;
-      document.getElementById('sumBalance').innerText = `${state.currency}${balance.toFixed(2)}`;
-      document.getElementById('chartTotal').innerText = `${state.currency}${exp.toFixed(2)}`;
-
-      renderCategoryGrid(catTotals);
-      drawPieChart(catTotals, exp);
-      renderHistoryList(filtered);
-      updatePeriodLabel();
-    }
-
-    function renderCategoryGrid(catTotals) {
-      const grid = document.getElementById('categoryGrid');
-      grid.innerHTML = '';
-      CATEGORIES.expense.forEach(cat => {
-        const spent = catTotals[cat.id] || 0;
-        const card = document.createElement('div');
-        card.className = 'cat-card';
-        card.onclick = () => openTransactionModal('expense', cat.id);
-        card.innerHTML = `
-          <span class="cat-icon">${cat.icon}</span>
-          <span class="cat-name">${cat.name}</span>
-          <span class="cat-amount">${spent > 0 ? state.currency + spent.toFixed(0) : '-'}</span>
-        `;
-        grid.appendChild(card);
-      });
-    }
-
-    function drawPieChart(catTotals, totalExp) {
-      const canvas = document.getElementById('pieChart');
-      const ctx = canvas.getContext('2d');
-      const cx = canvas.width / 2;
-      const cy = canvas.height / 2;
-      const radius = 90;
-
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      if (totalExp === 0) {
-        ctx.beginPath();
-        ctx.arc(cx, cy, radius, 0, 2 * Math.PI);
-        ctx.fillStyle = '#2d3748';
-        ctx.fill();
-        ctx.beginPath();
-        ctx.arc(cx, cy, radius * 0.68, 0, 2 * Math.PI);
-        ctx.fillStyle = '#121824';
-        ctx.fill();
-        return;
-      }
-
-      let startAngle = -Math.PI / 2;
-      CATEGORIES.expense.forEach(cat => {
-        const spent = catTotals[cat.id] || 0;
-        if (spent <= 0) return;
-        const sliceAngle = (spent / totalExp) * (2 * Math.PI);
-
-        ctx.beginPath();
-        ctx.moveTo(cx, cy);
-        ctx.arc(cx, cy, radius, startAngle, startAngle + sliceAngle);
-        ctx.closePath();
-        ctx.fillStyle = cat.color;
-        ctx.fill();
-
-        startAngle += sliceAngle;
-      });
-
-      ctx.beginPath();
-      ctx.arc(cx, cy, radius * 0.68, 0, 2 * Math.PI);
-      ctx.fillStyle = '#121824';
-      ctx.fill();
-    }
-
-    function renderHistoryList(filtered) {
-      const list = document.getElementById('historyList');
+    function renderList() {
+      const list = document.getElementById('list');
       list.innerHTML = '';
 
-      if (filtered.length === 0) {
-        list.innerHTML = '<div style="text-align:center; color:#a0aec0; padding:20px;">Sin registros en este período</div>';
+      if (transactions.length === 0) {
+        list.innerHTML = '<div class="empty-state">No hay movimientos registrados</div>';
         return;
       }
 
-      filtered.forEach(t => {
-        const catList = CATEGORIES[t.type];
-        const cat = catList.find(c => c.id === t.catId) || { icon: '❓', name: t.catId };
-        const isExp = t.type === 'expense';
-
+      transactions.slice().reverse().forEach((transaction, index) => {
         const item = document.createElement('div');
-        item.className = 'history-item';
+        item.classList.add('transaction-item');
+
+        const isIncome = transaction.type === 'income';
+        const sign = isIncome ? '+' : '-';
+        const colorClass = isIncome ? 'income' : 'expense';
+
         item.innerHTML = `
-          <div class="history-left">
-            <div class="history-icon">${cat.icon}</div>
-            <div class="history-meta">
-              <strong>${cat.name}</strong> ${t.note ? '• ' + t.note : ''}
-              <small>${t.date} • ${t.account}</small>
-            </div>
+          <div class="tx-info">
+            <span class="tx-title">${transaction.text}</span>
+            <span class="tx-date">${transaction.date}</span>
           </div>
-          <div style="text-align:right;">
-            <div class="${isExp ? 'text-expense' : 'text-income'}" style="font-weight:bold;">
-              ${isExp ? '-' : '+'}${state.currency}${t.amount.toFixed(2)}
-            </div>
-            <button style="background:none; border:none; color:#e53e3e; font-size:0.75rem; cursor:pointer;" onclick="deleteTrans(${t.id})">Eliminar</button>
-          </div>
+          <span class="tx-amount ${colorClass}">${sign}$${transaction.amount.toFixed(2)}</span>
         `;
         list.appendChild(item);
       });
     }
 
-    function deleteTrans(id) {
-      if (confirm('¿Eliminar esta transacción?')) {
-        state.transactions = state.transactions.filter(t => t.id !== id);
-        saveState();
-      }
-    }
+    document.getElementById('form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const textInput = document.getElementById('text');
+      const amountInput = document.getElementById('amount');
 
-    function setPeriod(p) {
-      state.period = p;
-      state.periodOffset = 0;
-      document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
-      event.target.classList.add('active');
-      renderApp();
-    }
+      if (!textInput.value.trim() || !amountInput.value) return;
 
-    function changePeriodOffset(dir) {
-      state.periodOffset += dir;
-      renderApp();
-    }
-
-    function updatePeriodLabel() {
-      const now = new Date();
-      if (state.period === 'MONTH') {
-        const target = new Date(now.getFullYear(), now.getMonth() + state.periodOffset, 1);
-        const name = target.toLocaleString('es-ES', { month: 'long', year: 'numeric' });
-        document.getElementById('periodLabel').innerText = name.toUpperCase();
-      } else if (state.period === 'DAY') {
-        const target = new Date();
-        target.setDate(now.getDate() + state.periodOffset);
-        document.getElementById('periodLabel').innerText = target.toLocaleDateString('es-ES');
-      } else {
-        document.getElementById('periodLabel').innerText = state.period;
-      }
-    }
-
-    function changeAccount(acc) {
-      state.account = acc;
-      renderApp();
-    }
-
-    function changeCurrency(curr) {
-      state.currency = curr;
-      saveState();
-    }
-
-    function exportBackupJSON() {
-      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state));
-      const downloadAnchor = document.createElement('a');
-      downloadAnchor.setAttribute("href", dataStr);
-      downloadAnchor.setAttribute("download", `monefy_backup_${new Date().toISOString().split('T')[0]}.json`);
-      document.body.appendChild(downloadAnchor);
-      downloadAnchor.click();
-      downloadAnchor.remove();
-    }
-
-    function importBackupJSON(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        try {
-          const imported = JSON.parse(e.target.result);
-          if (imported.transactions) {
-            state = imported;
-            saveState();
-            alert('¡Copia de seguridad restaurada con éxito!');
-            closeModal('settingsModal');
-          }
-        } catch (err) {
-          alert('Archivo de respaldo no válido.');
-        }
+      const newTransaction = {
+        id: Date.now(),
+        text: textInput.value,
+        amount: parseFloat(amountInput.value),
+        type: currentType,
+        date: new Date().toLocaleDateString('es-ES', { day: 'numeric', month: 'short' })
       };
-      reader.readAsText(file);
-    }
 
-    function exportCSV() {
-      let csv = "ID,Fecha,Tipo,Monto,Categoria,Cuenta,Nota\n";
-      state.transactions.forEach(t => {
-        csv += `${t.id},${t.date},${t.type},${t.amount},${t.catId},${t.account},"${t.note || ''}"\n`;
-      });
-      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `gastos_${new Date().toISOString().split('T')[0]}.csv`;
-      a.click();
-    }
+      transactions.push(newTransaction);
+      localStorage.setItem('apple_glass_transactions', JSON.stringify(transactions));
 
-    function resetAllData() {
-      if (confirm('¿Estás seguro de borrar todos tus datos? Esta acción no se puede deshacer.')) {
-        state.transactions = [];
-        saveState();
-        closeModal('settingsModal');
-      }
-    }
+      textInput.value = '';
+      amountInput.value = '';
 
-    function openModal(id) { document.getElementById(id).classList.add('active'); }
-    function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+      updateValues();
+      renderList();
+    });
+
+    // Init App
+    updateValues();
+    renderList();
   </script>
 </body>
 </html>
