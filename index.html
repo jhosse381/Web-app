@@ -5,15 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <title>Gastos</title>
+  <title>Gastos - Liquid Glass</title>
   <style>
     :root {
       --glass-bg: rgba(255, 255, 255, 0.08);
-      --glass-border: rgba(255, 255, 255, 0.18);
-      --glass-shadow: 0 16px 40px 0 rgba(0, 0, 0, 0.37);
+      --glass-card: rgba(255, 255, 255, 0.06);
+      --glass-border: rgba(255, 255, 255, 0.16);
+      --glass-shadow: 0 16px 40px 0 rgba(0, 0, 0, 0.45);
       --accent-green: #30D158;
       --accent-red: #FF453A;
       --accent-blue: #0A84FF;
+      --accent-purple: #BF5AF2;
+      --accent-orange: #FF9F0A;
       --text-main: #FFFFFF;
       --text-muted: rgba(255, 255, 255, 0.6);
     }
@@ -27,12 +30,12 @@
     }
 
     body {
-      background-color: #000000;
+      background-color: #050608;
       color: var(--text-main);
       min-height: 100vh;
       display: flex;
       justify-content: center;
-      padding: calc(env(safe-area-inset-top) + 20px) 16px calc(env(safe-area-inset-bottom) + 20px);
+      padding: calc(env(safe-area-inset-top) + 16px) 16px calc(env(safe-area-inset-bottom) + 24px);
       overflow-x: hidden;
       position: relative;
     }
@@ -46,47 +49,47 @@
       height: 100vh;
       z-index: -1;
       overflow: hidden;
-      background: #0d0e15;
+      background: #08090e;
     }
 
     .blob {
       position: absolute;
       border-radius: 50%;
-      filter: blur(90px);
-      opacity: 0.6;
-      animation: float 12s infinite alternate ease-in-out;
+      filter: blur(100px);
+      opacity: 0.55;
+      animation: float 14s infinite alternate ease-in-out;
     }
 
     .blob-1 {
-      width: 280px;
-      height: 280px;
+      width: 300px;
+      height: 300px;
       background: #0A84FF;
-      top: -40px;
-      left: -40px;
+      top: -60px;
+      left: -60px;
     }
 
     .blob-2 {
-      width: 320px;
-      height: 320px;
+      width: 340px;
+      height: 340px;
       background: #BF5AF2;
-      bottom: -60px;
-      right: -40px;
-      animation-delay: -4s;
+      bottom: -80px;
+      right: -60px;
+      animation-delay: -5s;
     }
 
     .blob-3 {
-      width: 200px;
-      height: 200px;
+      width: 240px;
+      height: 240px;
       background: #30D158;
-      top: 40%;
-      left: 30%;
-      animation-delay: -8s;
-      opacity: 0.3;
+      top: 45%;
+      left: 20%;
+      animation-delay: -9s;
+      opacity: 0.25;
     }
 
     @keyframes float {
       0% { transform: translate(0, 0) scale(1); }
-      100% { transform: translate(30px, 50px) scale(1.1); }
+      100% { transform: translate(40px, 60px) scale(1.15); }
     }
 
     .app-container {
@@ -94,17 +97,17 @@
       max-width: 420px;
       display: flex;
       flex-direction: column;
-      gap: 20px;
+      gap: 16px;
     }
 
-    /* Common Glass Card Style */
+    /* Glass Cards */
     .glass-card {
-      background: var(--glass-bg);
-      backdrop-filter: blur(30px) saturate(190%);
-      -webkit-backdrop-filter: blur(30px) saturate(190%);
+      background: var(--glass-card);
+      backdrop-filter: blur(35px) saturate(200%);
+      -webkit-backdrop-filter: blur(35px) saturate(200%);
       border: 1px solid var(--glass-border);
-      border-radius: 28px;
-      padding: 22px;
+      border-radius: 26px;
+      padding: 20px;
       box-shadow: var(--glass-shadow);
     }
 
@@ -112,40 +115,51 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 4px 8px;
+      padding: 4px 6px;
     }
 
     header h1 {
       font-size: 28px;
-      font-weight: 700;
-      letter-spacing: -0.5px;
+      font-weight: 800;
+      letter-spacing: -0.6px;
     }
 
     .subtitle {
       font-size: 13px;
       color: var(--text-muted);
+      font-weight: 500;
     }
 
-    /* Balance Section */
+    .month-picker {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid var(--glass-border);
+      color: #fff;
+      padding: 6px 12px;
+      border-radius: 14px;
+      font-size: 13px;
+      font-weight: 600;
+      outline: none;
+    }
+
+    /* Balance & Stats */
     .balance-card {
       text-align: center;
-      position: relative;
-      overflow: hidden;
     }
 
     .balance-title {
-      font-size: 13px;
+      font-size: 12px;
       text-transform: uppercase;
-      letter-spacing: 1px;
+      letter-spacing: 1.2px;
       color: var(--text-muted);
-      margin-bottom: 6px;
+      margin-bottom: 4px;
+      font-weight: 600;
     }
 
     .balance-amount {
-      font-size: 42px;
+      font-size: 40px;
       font-weight: 800;
       letter-spacing: -1px;
-      margin-bottom: 20px;
+      margin-bottom: 16px;
     }
 
     .stats-grid {
@@ -153,7 +167,7 @@
       grid-template-columns: 1fr 1fr;
       gap: 12px;
       border-top: 1px solid rgba(255, 255, 255, 0.1);
-      padding-top: 16px;
+      padding-top: 14px;
     }
 
     .stat-item {
@@ -165,39 +179,54 @@
     .stat-label {
       font-size: 12px;
       color: var(--text-muted);
-      margin-bottom: 4px;
+      margin-bottom: 2px;
     }
 
     .stat-value {
-      font-size: 18px;
-      font-weight: 600;
+      font-size: 17px;
+      font-weight: 700;
     }
 
     .income { color: var(--accent-green); }
     .expense { color: var(--accent-red); }
+
+    /* Budget Meter */
+    .budget-section {
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .budget-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+
+    .progress-bar-bg {
+      width: 100%;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--accent-green);
+      border-radius: 10px;
+      transition: width 0.4s ease, background-color 0.4s ease;
+    }
 
     /* Form Styles */
     .form-group {
       display: flex;
       flex-direction: column;
       gap: 12px;
-    }
-
-    .input-glass {
-      width: 100%;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 16px;
-      padding: 14px 16px;
-      color: #fff;
-      font-size: 15px;
-      outline: none;
-      transition: all 0.3s ease;
-    }
-
-    .input-glass:focus {
-      border-color: var(--accent-blue);
-      background: rgba(255, 255, 255, 0.1);
     }
 
     .type-selector {
@@ -209,7 +238,7 @@
     .type-btn {
       background: rgba(255, 255, 255, 0.05);
       border: 1px solid rgba(255, 255, 255, 0.12);
-      padding: 12px;
+      padding: 11px;
       border-radius: 16px;
       color: var(--text-muted);
       font-weight: 600;
@@ -219,28 +248,49 @@
     }
 
     .type-btn.active-expense {
-      background: rgba(255, 69, 58, 0.2);
+      background: rgba(255, 69, 58, 0.22);
       border-color: var(--accent-red);
       color: #FFF;
     }
 
     .type-btn.active-income {
-      background: rgba(48, 209, 88, 0.2);
+      background: rgba(48, 209, 88, 0.22);
       border-color: var(--accent-green);
       color: #FFF;
+    }
+
+    .input-glass, .select-glass {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 16px;
+      padding: 13px 16px;
+      color: #fff;
+      font-size: 15px;
+      outline: none;
+      transition: all 0.25s ease;
+    }
+
+    .select-glass option {
+      background: #1c1c1e;
+      color: #fff;
+    }
+
+    .input-glass:focus, .select-glass:focus {
+      border-color: var(--accent-blue);
+      background: rgba(255, 255, 255, 0.12);
     }
 
     .btn-submit {
       background: var(--text-main);
       color: #000;
       border: none;
-      padding: 16px;
+      padding: 15px;
       border-radius: 18px;
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 700;
       cursor: pointer;
       transition: transform 0.1s ease, opacity 0.2s ease;
-      margin-top: 4px;
     }
 
     .btn-submit:active {
@@ -248,59 +298,155 @@
       opacity: 0.9;
     }
 
-    /* Transactions List */
-    .history-title {
-      font-size: 18px;
-      font-weight: 600;
+    /* Breakdown Section */
+    .section-title {
+      font-size: 16px;
+      font-weight: 700;
       margin-bottom: 12px;
-      padding: 0 4px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
 
+    .category-bars {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .cat-bar-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .cat-bar-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .cat-progress-bg {
+      height: 6px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .cat-progress-fill {
+      height: 100%;
+      border-radius: 6px;
+      transition: width 0.4s ease;
+    }
+
+    /* Transactions List */
     .transaction-list {
       display: flex;
       flex-direction: column;
       gap: 10px;
-      max-height: 300px;
+      max-height: 280px;
       overflow-y: auto;
+      padding-right: 2px;
     }
 
     .transaction-item {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 14px 18px;
+      padding: 12px 16px;
       background: rgba(255, 255, 255, 0.04);
       border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 20px;
-      backdrop-filter: blur(10px);
+      border-radius: 18px;
+      backdrop-filter: blur(12px);
+      transition: transform 0.2s ease, opacity 0.2s ease;
+    }
+
+    .tx-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .tx-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      background: rgba(255, 255, 255, 0.08);
     }
 
     .tx-info {
       display: flex;
       flex-direction: column;
-      gap: 2px;
     }
 
     .tx-title {
-      font-size: 15px;
-      font-weight: 500;
+      font-size: 14px;
+      font-weight: 600;
     }
 
-    .tx-date {
-      font-size: 12px;
+    .tx-sub {
+      font-size: 11px;
       color: var(--text-muted);
     }
 
+    .tx-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
     .tx-amount {
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 700;
+    }
+
+    .btn-delete {
+      background: transparent;
+      border: none;
+      color: rgba(255, 255, 255, 0.3);
+      font-size: 16px;
+      cursor: pointer;
+      padding: 4px;
+      transition: color 0.2s;
+    }
+
+    .btn-delete:hover {
+      color: var(--accent-red);
     }
 
     .empty-state {
       text-align: center;
       color: var(--text-muted);
-      font-size: 14px;
-      padding: 20px;
+      font-size: 13px;
+      padding: 24px;
+    }
+
+    /* Actions Footer */
+    .actions-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: #fff;
+      padding: 10px;
+      border-radius: 14px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn-secondary:active {
+      background: rgba(255, 255, 255, 0.15);
     }
   </style>
 </head>
@@ -316,13 +462,14 @@
     <header>
       <div>
         <h1>Finanzas</h1>
-        <div class="subtitle">Seguimiento personal</div>
+        <div class="subtitle" id="current-month-name">Control mensual</div>
       </div>
+      <input type="month" id="month-picker" class="month-picker" onchange="changeMonth()">
     </header>
 
     <!-- Balance Card -->
     <div class="glass-card balance-card">
-      <div class="balance-title">Balance Total</div>
+      <div class="balance-title">Balance Neto</div>
       <div class="balance-amount" id="balance">$0.00</div>
       
       <div class="stats-grid">
@@ -335,9 +482,30 @@
           <span class="stat-value expense" id="expenses">-$0.00</span>
         </div>
       </div>
+
+      <!-- Límite de Presupuesto -->
+      <div class="budget-section">
+        <div class="budget-header">
+          <span>Presupuesto gastado</span>
+          <span id="budget-text">0% de $1,000</span>
+        </div>
+        <div class="progress-bar-bg">
+          <div class="progress-bar-fill" id="budget-bar"></div>
+        </div>
+      </div>
     </div>
 
-    <!-- Add Transaction Form -->
+    <!-- Desglose por Categoría -->
+    <div class="glass-card">
+      <div class="section-title">
+        <span>Desglose de Gastos</span>
+      </div>
+      <div class="category-bars" id="category-bars">
+        <div class="empty-state" style="padding: 10px 0;">Sin gastos este mes</div>
+      </div>
+    </div>
+
+    <!-- Agregar Transacción -->
     <div class="glass-card">
       <form id="form" class="form-group">
         <div class="type-selector">
@@ -345,27 +513,66 @@
           <button type="button" class="type-btn" id="btn-income" onclick="setType('income')">Ingreso</button>
         </div>
 
-        <input type="text" id="text" class="input-glass" placeholder="Descripción (ej. Supermercado)" required>
+        <input type="text" id="text" class="input-glass" placeholder="Descripción (ej. Súper, Cine)" required>
         <input type="number" id="amount" class="input-glass" placeholder="Monto ($)" step="0.01" required>
+        
+        <select id="category" class="select-glass" required>
+          <!-- Se llena dinámicamente -->
+        </select>
 
-        <button type="submit" class="btn-submit">Registrar</button>
+        <button type="submit" class="btn-submit">Registrar Movimiento</button>
       </form>
     </div>
 
-    <!-- History -->
-    <div>
-      <div class="history-title">Movimientos</div>
-      <div class="transaction-list" id="list">
-        <div class="empty-state">No hay movimientos registrados</div>
+    <!-- Historial -->
+    <div class="glass-card">
+      <div class="section-title">
+        <span>Historial del Mes</span>
       </div>
+      <div class="transaction-list" id="list">
+        <div class="empty-state">No hay movimientos en este mes</div>
+      </div>
+    </div>
+
+    <!-- Opciones de Backup y Ajustes -->
+    <div class="actions-grid">
+      <button class="btn-secondary" onclick="exportToCSV()">Exportar CSV</button>
+      <button class="btn-secondary" onclick="setBudgetPrompt()">Ajustar Presupuesto</button>
     </div>
   </div>
 
   <script>
+    const CATEGORIES = {
+      expense: [
+        { id: 'comida', name: 'Comida & Súper', icon: '🛒', color: '#FF9F0A' },
+        { id: 'transporte', name: 'Transporte', icon: '🚗', color: '#0A84FF' },
+        { id: 'vivienda', name: 'Vivienda & Servicios', icon: '🏠', color: '#BF5AF2' },
+        { id: 'ocio', name: 'Ocio & Salidas', icon: '🍿', color: '#FF453A' },
+        { id: 'salud', name: 'Salud & Cuidado', icon: '💊', color: '#32D74B' },
+        { id: 'otros_gasto', name: 'Otros Gastos', icon: '📦', color: '#64D2FF' }
+      ],
+      income: [
+        { id: 'sueldo', name: 'Sueldo & Nomina', icon: '💼', color: '#30D158' },
+        { id: 'freelance', name: 'Freelance & Proyectos', icon: '💻', color: '#64D2FF' },
+        { id: 'inversiones', name: 'Inversiones', icon: '📈', color: '#FFD60A' },
+        { id: 'otros_ingreso', name: 'Otros Ingresos', icon: '🎁', color: '#BF5AF2' }
+      ]
+    };
+
     let currentType = 'expense';
+    let currentMonth = new Date().toISOString().slice(0, 7); // "YYYY-MM"
+    let monthlyBudget = parseFloat(localStorage.getItem('apple_glass_budget')) || 1000;
     let transactions = JSON.parse(localStorage.getItem('apple_glass_transactions')) || [];
 
+    // Inicializar picker de mes
+    document.getElementById('month-picker').value = currentMonth;
+
+    function triggerHaptic() {
+      if (navigator.vibrate) navigator.vibrate(15);
+    }
+
     function setType(type) {
+      triggerHaptic();
       currentType = type;
       const btnExpense = document.getElementById('btn-expense');
       const btnIncome = document.getElementById('btn-income');
@@ -377,69 +584,176 @@
         btnIncome.className = 'type-btn active-income';
         btnExpense.className = 'type-btn';
       }
+      populateCategories();
     }
 
-    function updateValues() {
-      const amounts = transactions.map(t => t.type === 'income' ? t.amount : -t.amount);
-      const total = amounts.reduce((acc, item) => (acc += item), 0).toFixed(2);
-      
-      const income = transactions
+    function populateCategories() {
+      const select = document.getElementById('category');
+      select.innerHTML = '';
+      CATEGORIES[currentType].forEach(cat => {
+        const option = document.createElement('option');
+        option.value = cat.id;
+        option.textContent = `${cat.icon} ${cat.name}`;
+        select.appendChild(option);
+      });
+    }
+
+    function changeMonth() {
+      currentMonth = document.getElementById('month-picker').value;
+      updateUI();
+    }
+
+    function setBudgetPrompt() {
+      const val = prompt("Ingresa tu presupuesto mensual estimado ($):", monthlyBudget);
+      if (val && !isNaN(val)) {
+        monthlyBudget = parseFloat(val);
+        localStorage.setItem('apple_glass_budget', monthlyBudget);
+        updateUI();
+      }
+    }
+
+    function getFilteredTransactions() {
+      return transactions.filter(t => t.monthKey === currentMonth);
+    }
+
+    function updateUI() {
+      const filtered = getFilteredTransactions();
+
+      // Cálculo de totales
+      const income = filtered
         .filter(t => t.type === 'income')
-        .reduce((acc, t) => (acc += t.amount), 0)
-        .toFixed(2);
+        .reduce((acc, t) => acc + t.amount, 0);
 
-      const expenses = transactions
+      const expenses = filtered
         .filter(t => t.type === 'expense')
-        .reduce((acc, t) => (acc += t.amount), 0)
-        .toFixed(2);
+        .reduce((acc, t) => acc + t.amount, 0);
 
-      document.getElementById('balance').innerText = `$${total}`;
-      document.getElementById('income').innerText = `+$${income}`;
-      document.getElementById('expenses').innerText = `-$${expenses}`;
+      const total = income - expenses;
+
+      document.getElementById('balance').innerText = `$${total.toFixed(2)}`;
+      document.getElementById('income').innerText = `+$${income.toFixed(2)}`;
+      document.getElementById('expenses').innerText = `-$${expenses.toFixed(2)}`;
+
+      // Límite de presupuesto
+      const budgetPct = Math.min((expenses / monthlyBudget) * 100, 100);
+      const budgetBar = document.getElementById('budget-bar');
+      budgetBar.style.width = `${budgetPct}%`;
+      
+      if (budgetPct > 90) {
+        budgetBar.style.backgroundColor = 'var(--accent-red)';
+      } else if (budgetPct > 70) {
+        budgetBar.style.backgroundColor = 'var(--accent-orange)';
+      } else {
+        budgetBar.style.backgroundColor = 'var(--accent-green)';
+      }
+
+      document.getElementById('budget-text').innerText = `${budgetPct.toFixed(0)}% de $${monthlyBudget.toLocaleString()}`;
+
+      renderCategoryBreakdown(filtered, expenses);
+      renderList(filtered);
     }
 
-    function renderList() {
-      const list = document.getElementById('list');
-      list.innerHTML = '';
+    function renderCategoryBreakdown(filtered, totalExpenses) {
+      const container = document.getElementById('category-bars');
+      container.innerHTML = '';
 
-      if (transactions.length === 0) {
-        list.innerHTML = '<div class="empty-state">No hay movimientos registrados</div>';
+      const expenseItems = filtered.filter(t => t.type === 'expense');
+
+      if (expenseItems.length === 0 || totalExpenses === 0) {
+        container.innerHTML = '<div class="empty-state" style="padding: 10px 0;">Sin gastos este mes</div>';
         return;
       }
 
-      transactions.slice().reverse().forEach((transaction, index) => {
-        const item = document.createElement('div');
-        item.classList.add('transaction-item');
+      // Agrupar por categoría
+      const totalsByCat = {};
+      expenseItems.forEach(t => {
+        totalsByCat[t.category] = (totalsByCat[t.category] || 0) + t.amount;
+      });
 
-        const isIncome = transaction.type === 'income';
+      CATEGORIES.expense.forEach(cat => {
+        const amount = totalsByCat[cat.id] || 0;
+        if (amount > 0) {
+          const pct = ((amount / totalExpenses) * 100).toFixed(0);
+          const item = document.createElement('div');
+          item.className = 'cat-bar-item';
+          item.innerHTML = `
+            <div class="cat-bar-label">
+              <span>${cat.icon} ${cat.name}</span>
+              <span>$${amount.toFixed(2)} (${pct}%)</span>
+            </div>
+            <div class="cat-progress-bg">
+              <div class="cat-progress-fill" style="width: ${pct}%; background-color: ${cat.color};"></div>
+            </div>
+          `;
+          container.appendChild(item);
+        }
+      });
+    }
+
+    function renderList(filtered) {
+      const list = document.getElementById('list');
+      list.innerHTML = '';
+
+      if (filtered.length === 0) {
+        list.innerHTML = '<div class="empty-state">No hay movimientos registrados en este mes</div>';
+        return;
+      }
+
+      filtered.slice().reverse().forEach((t) => {
+        const item = document.createElement('div');
+        item.className = 'transaction-item';
+
+        const isIncome = t.type === 'income';
+        const catList = CATEGORIES[t.type];
+        const catObj = catList.find(c => c.id === t.category) || { icon: '💰', name: 'General' };
         const sign = isIncome ? '+' : '-';
         const colorClass = isIncome ? 'income' : 'expense';
 
         item.innerHTML = `
-          <div class="tx-info">
-            <span class="tx-title">${transaction.text}</span>
-            <span class="tx-date">${transaction.date}</span>
+          <div class="tx-left">
+            <div class="tx-icon">${catObj.icon}</div>
+            <div class="tx-info">
+              <span class="tx-title">${t.text}</span>
+              <span class="tx-sub">${t.date} · ${catObj.name}</span>
+            </div>
           </div>
-          <span class="tx-amount ${colorClass}">${sign}$${transaction.amount.toFixed(2)}</span>
+          <div class="tx-right">
+            <span class="tx-amount ${colorClass}">${sign}$${t.amount.toFixed(2)}</span>
+            <button class="btn-delete" onclick="deleteTransaction(${t.id})">✕</button>
+          </div>
         `;
         list.appendChild(item);
       });
     }
 
+    function deleteTransaction(id) {
+      triggerHaptic();
+      transactions = transactions.filter(t => t.id !== id);
+      localStorage.setItem('apple_glass_transactions', JSON.stringify(transactions));
+      updateUI();
+    }
+
     document.getElementById('form').addEventListener('submit', function(e) {
       e.preventDefault();
-      
+      triggerHaptic();
+
       const textInput = document.getElementById('text');
       const amountInput = document.getElementById('amount');
+      const categoryInput = document.getElementById('category');
 
       if (!textInput.value.trim() || !amountInput.value) return;
 
+      const dateObj = new Date();
+      const monthKey = `${dateObj.getFullYear()}-${String(dateObj.getMonth() + 1).padStart(2, '0')}`;
+
       const newTransaction = {
         id: Date.now(),
-        text: textInput.value,
+        text: textInput.value.trim(),
         amount: parseFloat(amountInput.value),
         type: currentType,
-        date: new Date().toLocaleDateString('es-ES', { day: 'numeric', month: 'short' })
+        category: categoryInput.value,
+        date: dateObj.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' }),
+        monthKey: monthKey
       };
 
       transactions.push(newTransaction);
@@ -448,13 +762,35 @@
       textInput.value = '';
       amountInput.value = '';
 
-      updateValues();
-      renderList();
+      // Cambiar la vista al mes actual si se registra algo hoy
+      currentMonth = monthKey;
+      document.getElementById('month-picker').value = currentMonth;
+
+      updateUI();
     });
 
-    // Init App
-    updateValues();
-    renderList();
+    function exportToCSV() {
+      if (transactions.length === 0) {
+        alert("No hay datos para exportar.");
+        return;
+      }
+
+      let csv = 'ID,Fecha,Descripcion,Monto,Tipo,Categoria,Mes\n';
+      transactions.forEach(t => {
+        csv += `${t.id},"${t.date}","${t.text}",${t.amount},${t.type},${t.category},${t.monthKey}\n`;
+      });
+
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `finanzas_backup_${currentMonth}.csv`;
+      a.click();
+    }
+
+    // Inicialización
+    populateCategories();
+    updateUI();
   </script>
 </body>
 </html>
